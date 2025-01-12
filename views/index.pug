@@ -1,0 +1,59 @@
+extends layout
+
+block content
+  .container
+    h1 Cal.com Email Extractor
+    input#calLink(type="text" placeholder="Enter Cal.com scheduling link")
+    button#submit Get Email
+    #loading.loading
+      .spinner
+      span Processing...
+    #result
+
+  script.
+    const submitBtn = document.getElementById('submit');
+    const loadingDiv = document.getElementById('loading');
+    const resultDiv = document.getElementById('result');
+    const calLinkInput = document.getElementById('calLink');
+
+    submitBtn.addEventListener('click', async () => {
+      const calLink = calLinkInput.value.trim();
+      if (!calLink) {
+        alert('Please enter a Cal.com scheduling link');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      loadingDiv.style.display = 'flex';
+      resultDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/book-and-cancel', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            calLink,
+            name: 'Folake',
+            email: 'folake-dao@gmail.com'
+          }),
+        });
+
+        const data = await response.json();
+        
+        resultDiv.textContent = data.success 
+          ? `Host Email: ${data.hostEmail}` 
+          : `Error: error`;
+        resultDiv.className = data.success ? 'success' : 'error';
+        resultDiv.style.display = 'block';
+      } catch (error) {
+        resultDiv.textContent = `Error: ${error.message}`;
+        resultDiv.className = 'error';
+        resultDiv.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        loadingDiv.style.display = 'none';
+      }
+    });
+    
