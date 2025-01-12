@@ -41,7 +41,7 @@ async function bookAndCancelMeeting(
     console.log("Refreshing page...");
     await page.reload({
       waitUntil: "networkidle0",
-      timeout: 30000,
+      timeout: 25000,
     });
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
